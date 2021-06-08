@@ -1,0 +1,94 @@
+<style>
+	.menu-nav-btn {
+		color: rgb(165, 81, 39);
+		margin: 0 1.5rem;
+		font-family: lulo-clean-w01-one-bold, sans-serif;
+    	font-size: 1.5rem;
+    	line-height: 40px;
+	}
+	
+	@media (min-width: 768px) {
+		.menu-nav-btn {
+			font-size: 2rem;
+		}
+		
+		.vertical-line {
+			border-left: 6px solid rgb(165, 81, 39);
+			height: 3rem;
+			position: absolute;
+			left: 50%;
+			margin-left: -3px;
+			top: 0;
+		}
+	}
+</style>
+
+<script type="text/javascript">
+var globalMenus = null;
+function globalGotoSection(selected) {
+	if (!globalMenus || !globalMenus.length) {
+		return false;
+	}
+	var selectedMenu = globalMenus[selected];
+	if (selectedMenu) {
+	 	selectedMenu.scrollIntoView();	
+	}
+	return false;
+}
+function fixMenus() {
+	var navParent = null;
+	var desktopNav = document.querySelector('[data-hook="restaurants.navigation-header"]');
+	if (desktopNav) {
+		while (desktopNav.firstChild) {
+    		desktopNav.removeChild(desktopNav.firstChild);
+		}
+		navParent = desktopNav;
+	}
+
+	var mobileNav = document.querySelector('[data-hook="restaurants.menu-picker.menus-dropdown"]');
+	
+	if (mobileNav) {
+		navParent = mobileNav.parentNode;
+		mobileNav.remove();
+	}
+
+	var menus = document.querySelectorAll('[data-hook="restaurants.menu-view"] > div');
+	if (!menus || menus.length < 2) {
+		return;
+	}
+
+	// turn from NodeList into List
+	var menuList = [];
+	for (let i = 0; i < menus.length; i++) {
+	  menuList.push(menus[i]);
+	}
+
+	// remove bad elements
+	var today = new Date();
+	var hours = today.getHours();
+	var minutes = today.getMinutes();
+	var seconds = today.getSeconds();
+	var label = 'LUNCH';
+	var dinnerHours = 15;
+	if (hours >= dinnerHours) {
+		menuList[0].remove();
+		menuList.splice(0, 1);
+		label = 'DINNER';
+	} else {
+		menuList[1].remove();
+		menuList.splice(1, 1);
+		label = 'LUNCH';
+	}
+	
+	// add new nav
+	if (navParent) {
+		navParent.innerHTML = `<button class="menu-nav-btn" onclick="return globalGotoSection(0)">${label}</button> <div class="vertical-line"></div> <button class="menu-nav-btn" onclick="return globalGotoSection(1)">DRINKS</button>`;
+	}
+
+	console.log(menuList);
+	globalMenus = menuList;
+}
+window.onload = function() {
+	setTimeout(fixMenus, 2000);
+};
+</script>
