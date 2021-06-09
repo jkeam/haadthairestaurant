@@ -25,6 +25,7 @@
 
 <script type="text/javascript">
 var globalMenus = null;
+var globalPage = '';
 function globalGotoSection(selected) {
 	if (!globalMenus || !globalMenus.length) {
 		return false;
@@ -35,7 +36,7 @@ function globalGotoSection(selected) {
 	}
 	return false;
 }
-function fixMenus() {
+function globalFixMenus() {
 	var navParent = null;
 	var desktopNav = document.querySelector('[data-hook="restaurants.navigation-header"]');
 	if (desktopNav) {
@@ -85,10 +86,18 @@ function fixMenus() {
 		navParent.innerHTML = `<button class="menu-nav-btn" onclick="return globalGotoSection(0)">${label}</button> <div class="vertical-line"></div> <button class="menu-nav-btn" onclick="return globalGotoSection(1)">DRINKS</button>`;
 	}
 
-	console.log(menuList);
 	globalMenus = menuList;
 }
 window.onload = function() {
-	setTimeout(fixMenus, 2000);
+    if (window.location.pathname === '/order-online') {
+        setTimeout(globalFixMenus, 2000);
+    }
+    
+    window.onmessage = function (event) {
+        if (event.data) {
+            console.log(event.data);
+            // additional code here
+        }
+   }
 };
 </script>
